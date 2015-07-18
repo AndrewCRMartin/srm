@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 
 typedef unsigned short int BOOL;
 #define TRUE 1
@@ -102,12 +103,16 @@ BOOL DeleteFile(char *filename, int count)
    /* Do our over-writing here                                          */
    fprintf(stderr,"Deleting %s\n", filename);
 
-   for(i=0;i<count;i++)
+   for(i=0;i<count-1;i++)
    {
       if(!ScrubFile(filename, i%2))
       {
          return(FALSE);
       }
+   }
+   if(!ScrubFile(filename, (-1)))
+   {
+      return(FALSE);
    }
 
    unlink(filename);
@@ -118,7 +123,7 @@ BOOL DeleteFile(char *filename, int count)
 /************************************************************************/
 void Usage(void)
 {
-   fprintf(stderr,"\nsrm V2.0 (c) Andrew C.R. Martin\n");
+   fprintf(stderr,"\nsrm V2.1 (c) Andrew C.R. Martin\n");
 
    fprintf(stderr,"\nUsage: srm [-n count] [-c] file [file...]\n");
 
@@ -161,10 +166,26 @@ BOOL ScrubFile(char *filename, int pass)
    
    /* Now step through file writing patt to each location               */
    fseek(fp, 0, SEEK_SET);
-   for(offset=0; offset<=fileSize; offset++)
+
+   if(pass == (-1))
    {
-      fputc(patt, fp);
+      srand((unsigned int)time(NULL));
+      
+      for(offset=0; offset<=fileSize; offset++)
+      {
+         patt = (unsigned char)(255 * rand()/(RAND_MAX+1.0));
+         
+         fputc(patt, fp);
+      }
    }
+   else
+   {
+      for(offset=0; offset<=fileSize; offset++)
+      {
+         fputc(patt, fp);
+      }
+   }
+   
 
    fclose(fp);
 

@@ -1,0 +1,18 @@
+Add calls to
+fdatasync()
+fcntl(file, F_FULLFSYNC, 1);
+fcntl(fd, F_SETFL, O_SYNC);
+
+fsync()
+
+See: http://sourceforge.net/projects/srm
+
+http://www.thefreecountry.com/security/securedelete.shtml
+http://wipe.sourceforge.net/
+http://www.cyberciti.biz/tips/linux-how-to-delete-file-securely.html
+http://jeenyus.net/~budney/linux/software/fwipe.html
+http://sourceforge.net/projects/hdparm/
+
+
+Might also want to implement flush_wcache() from hdparm.c
+
